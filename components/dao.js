@@ -1,24 +1,22 @@
 'use strict';
 
 
-(function() {
-    module.exports = {
-        nextSubjectWords: nextSubjectWords,
-        nextParagraphWords: nextParagraphWords,
-        randomBeginSubjectWord: randomBeginSubjectWord,
-        randomParagraphBeginWord: randomParagraphBeginWord
-    };
+module.exports = {
+    nextSubjectWords: nextSubjectWords,
+    nextParagraphWord: nextParagraphWord,
+    randomBeginSubjectWord: randomBeginSubjectWord,
+    randomBeginParagraphWords: randomParagraphBeginWords
+};
 
-    function nextSubjectWords(word) {
-        throw 'not implemented';
-    }
-    function nextParagraphWords(first, second) {
-        throw 'not implemented';
-    }
-    function randomBeginSubjectWord() {
-        throw 'not implemented';
-    }
-    function randomParagraphBeginWord() {
-        throw 'not implemented';
-    }
-})();
+function nextSubjectWords(word) {
+    throw 'not implemented';
+}
+function nextParagraphWord(first, second) {
+    throw 'not implemented';
+}
+function randomBeginSubjectWord() {
+    throw 'not implemented';
+}
+function randomParagraphBeginWords() {
+    throw 'not implemented';
+}
