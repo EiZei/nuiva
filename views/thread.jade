@@ -1,0 +1,17 @@
+extends layout
+block content
+    h1 NUIVA
+    table
+        thead
+            tr
+                th
+                th Kirjoittaja
+                th='Aihe: ' + thread.subject
+        tbody
+            each post, i in thread.posts
+                tr
+                    td
+                    td Eino Pillu
+                    td
+                        each paragraph in post
+                            p=paragraph

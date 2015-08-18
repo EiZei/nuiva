@@ -11,7 +11,7 @@ var randomDate = function() {
   var randomEpoch = new Date() - _.random(0, 30 * 24 * 60 * 60 * 1000);
   return new Date(randomEpoch).toLocaleDateString();
 };
-/* GET home page. */
+
 router.get('/', function(req, res) {
   var subjectPromises = _.times(20, textGeneration.subject);
   Q.all(subjectPromises).then(function(subjects) {

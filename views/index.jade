@@ -1,28 +1,28 @@
 extends layout
 
 block content
-  h1 NUIVA
-  p Sivuja: [ 1 ] 2 3 ... 438
+    h1 NUIVA
+    p Sivuja: [ 1 ] 2 3 ... 438
 
-  table
-    thead
-      tr
-        th
-        th
-        th Aihe / Aloittaja
-        th Vastauksia / Lukukerrat / Likes
-        th Uusin viesti
-        th
-    tbody
-      each entry, i in entries
-          tr
-            td
-            td
-            td
-              h4=entry.subject
-              span Aloittaja Eino Pillu
-              a(href="thread")= subject
-            td=entry.replies + ' Vastauksia'
-            td=entry.previousReply
-            td
-              a(href="thread") (linkki)
+    table
+        thead
+            tr
+                th
+                th
+                th Aihe / Aloittaja
+                th Vastauksia / Lukukerrat / Likes
+                th Uusin viesti
+                th
+        tbody
+            each entry, i in entries
+                tr
+                    td
+                    td
+                    td
+                        a(href="thread")
+                            h4=entry.subject
+                        span Aloittaja Eino Pillu
+                    td=entry.replies + ' Vastauksia'
+                    td=entry.previousReply
+                    td
+                        a(href="thread") (linkki)
