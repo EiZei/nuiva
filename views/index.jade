@@ -1,5 +1,24 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  h1 NUIVA
+  p Sivuja: [ 1 ] 2 3 ... 438
+
+  table
+    thead
+      tr
+        th
+        th
+        th Aihe / Aloittaja
+        th Vastauksia / Lukukerrat / Likes
+        th Uusin viesti
+        th
+    tbody
+      each subject, i in subjects
+          tr
+            td
+            td
+            td= subject
+            td 14 Vastauksia
+            td tänään kello 14:58:16
+            td (linkki)

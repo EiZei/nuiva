@@ -27,8 +27,12 @@ var weightedRandomSample = function (choices) {
 
 function subject() {
     var appendWords = function (soFar) {
-        var promise = dao.nextSubjectWords(soFar[soFar.length - 1]);
+        var previousWord = soFar[soFar.length - 1];
+        var promise = dao.nextSubjectWords(previousWord);
         return promise.then(function (nextWords) {
+            if (nextWords.length === 0) {
+                throw 'no next words for ' + previousWord;
+            }
             var nextWord = weightedRandomSample(nextWords);
             if (nextWord) {
                 soFar.push(nextWord);

@@ -7,9 +7,8 @@ var _ = require('lodash');
 describe('Text generation', function () {
     var textGeneration;
     var mockDao;
-    var instantDeferred;
     beforeEach(function () {
-        textGeneration = rewire('../components/text_generation');
+        textGeneration = rewire('../components/text-generation');
         mockDao = {};
         textGeneration.__set__('dao', mockDao);
     });

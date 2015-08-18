@@ -10,12 +10,12 @@ module.exports = {
     randomBeginParagraphWords: randomParagraphBeginWords
 };
 
-var db = function () {
-    return new sqlite3.Database('nuiva.db');
-};
+var db = new sqlite3.Database('nuiva.db');
+
 function nextSubjectWords(word) {
     var deferred = Q.defer();
-    db().all('SELECT next AS value, count AS weight FROM subject WHERE word = ?', [word], function (err, rows) {
+    console.log(JSON.stringify(word));
+    db.all('SELECT next AS value, count AS weight FROM subject WHERE word = ?', [word], function (err, rows) {
         if (err) {
             deferred.reject(err);
         }
@@ -27,7 +27,7 @@ function nextSubjectWords(word) {
 }
 function nextParagraphWord(first, second) {
     var deferred = Q.defer();
-    db().all('SELECT next AS value, count AS weight FROM paragraph WHERE word_1 = ? AND word_2 = ?', [first, second], function (err, rows) {
+    db.all('SELECT next AS value, count AS weight FROM paragraph WHERE word_1 = ? AND word_2 = ?', [first, second], function (err, rows) {
         if (err) {
             deferred.reject(err);
         }
@@ -39,7 +39,7 @@ function nextParagraphWord(first, second) {
 }
 function randomBeginSubjectWord() {
     var deferred = Q.defer();
-    db().get('SELECT word FROM first_subject_word ORDER BY RANDOM() LIMIT 1', [], function (err, row) {
+    db.get('SELECT word FROM first_subject_word ORDER BY RANDOM() LIMIT 1', [], function (err, row) {
         if (err) {
             deferred.reject(err);
         }
@@ -51,7 +51,7 @@ function randomBeginSubjectWord() {
 }
 function randomParagraphBeginWords() {
     var deferred = Q.defer();
-    db().get('SELECT word_1, word_2 FROM first_paragraph_word ORDER BY RANDOM() LIMIT 1', [], function (err, row) {
+    db.get('SELECT word_1, word_2 FROM first_paragraph_word ORDER BY RANDOM() LIMIT 1', [], function (err, row) {
         if (err) {
             deferred.reject(err);
         }

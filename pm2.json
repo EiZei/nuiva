@@ -1,0 +1,10 @@
+{
+  "apps":[{
+    "name": "nuiva",
+    "script": "bin/www",
+    "watch": ["routes/*.js", "components/*.js"],
+    "watch_options": {
+      "usePolling": true
+    }
+  }]
+}
