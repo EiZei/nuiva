@@ -14,11 +14,15 @@ block content
         th Uusin viesti
         th
     tbody
-      each subject, i in subjects
+      each entry, i in entries
           tr
             td
             td
-            td= subject
-            td 14 Vastauksia
-            td tänään kello 14:58:16
-            td (linkki)
+            td
+              h4=entry.subject
+              span Aloittaja Eino Pillu
+              a(href="thread")= subject
+            td=entry.replies + ' Vastauksia'
+            td=entry.previousReply
+            td
+              a(href="thread") (linkki)

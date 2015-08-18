@@ -14,7 +14,6 @@ var db = new sqlite3.Database('nuiva.db');
 
 function nextSubjectWords(word) {
     var deferred = Q.defer();
-    console.log(JSON.stringify(word));
     db.all('SELECT next AS value, count AS weight FROM subject WHERE word = ?', [word], function (err, rows) {
         if (err) {
             deferred.reject(err);
