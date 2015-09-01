@@ -1,12 +1,17 @@
 'use strict';
 
+var Q = require('q');
+var LRU = require('lru-cache');
 var dao = require('./dao');
 var _ = require('lodash');
+
 
 module.exports = {
     subject: subject,
     paragraph: paragraph
 };
+
+var paragraphCache = new LRU(1000);
 
 var weightedRandomSample = function (choices) {
     var weightSum = _.sum(_.map(choices, 'weight'));
@@ -47,9 +52,25 @@ function subject() {
         return appendWords([beginWord]);
     });
 }
+
+function nextParaghWord(currentWords) {
+    var cached = paragraphCache.get(currentWords);
+    if (cached) {
+        var deferred = Q.defer();
+        deferred.resolve(cached);
+        return deferred.promise;
+    } else {
+        return dao.nextParagraphWord(currentWords[0], currentWords[1]).then(function(nextWords) {
+            paragraphCache.set(currentWords, nextWords);
+            return nextWords;
+        });
+    }
+}
+
 function paragraph() {
-    var appendWords = function (soFar) {
-        var promise = dao.nextParagraphWord(soFar[soFar.length - 2], soFar[soFar.length - 1]);
+    var soFar = [];
+    var appendWords = function () {
+        var promise = nextParaghWord([soFar[soFar.length - 2], soFar[soFar.length - 1]]);
         return promise.then(function (nextWords) {
             var nextWord = weightedRandomSample(nextWords);
             if (nextWord) {
@@ -62,6 +83,7 @@ function paragraph() {
     };
 
     return dao.randomBeginParagraphWords().then(function (beginWords) {
-        return appendWords(beginWords.concat([]));
+        soFar = beginWords.concat([]);
+        return appendWords();
     });
 }

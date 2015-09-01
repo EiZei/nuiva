@@ -21,7 +21,7 @@ describe('Text generation', function () {
                 } else {
                     throw 'not expected';
                 }
-            }
+            };
         };
         beforeEach(function () {
             mockDao.randomBeginSubjectWord = function () {
