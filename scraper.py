@@ -1,11 +1,13 @@
 import random
-import sqlite3
+import psycopg2
 import sys
+
 
 from bs4 import BeautifulSoup
 import requests
 
-conn = sqlite3.connect('nuiva.db')
+conn = psycopg2.connect()
+cursor = conn.cursor()
 
 
 def weighted_choose(choices):
@@ -33,7 +35,8 @@ def scrape_board_page(board_id, offset):
     elem_to_thread_id = lambda elem: int(elem.find('a').get('href').split('.')[-3].split(',')[-1])
     threads = [(elem_to_thread_id(elem), elem.find('a').text) for elem in doc.findAll('td', class_='subject')]
     for thread_id, subject in threads:
-        if conn.execute('SELECT COUNT(*) FROM processed_threads WHERE thread_id = ?''', (thread_id,)).next()[0] > 0:
+        cursor.execute('SELECT COUNT(*) FROM processed_threads WHERE thread_id = %s', (thread_id,))
+        if cursor.fetchone()[0] > 0:
             print 'skipping thread {}, already processed'.format(thread_id)
             continue
         print 'scraping thread {}'.format(thread_id)
@@ -45,11 +48,16 @@ def process_subject(subject):
     parts = [part.lower() for part in subject.split()]
     if len(parts) < 2:
         return
-    conn.execute('''INSERT OR IGNORE INTO first_subject_word VALUES (?)''', (parts[0],))
+    cursor.execute('SELECT COUNT(*) FROM first_subject_word WHERE word = %s', (parts[0],))
+    if cursor.fetchone()[0] == 0:
+        cursor.execute('''INSERT INTO first_subject_word VALUES (%s)''', (parts[0],))
     for i in xrange(len(parts)):
         first, second = (parts[i], parts[i + 1] if i < (len(parts) - 1) else None)
-        conn.execute('''INSERT OR IGNORE INTO subject VALUES (?, ?, 0)''', (first, second))
-        conn.execute('''UPDATE subject SET count = count + 1 WHERE word = ? AND next = ?''', (first, second))
+        cursor.execute('SELECT COUNT(*) FROM subject WHERE word = %s AND next = %s', (first, second))
+        if cursor.fetchone()[0] == 0:
+            cursor.execute('''INSERT INTO subject VALUES (%s, %s, 1)''', (first, second))
+        else:
+            cursor.execute('''UPDATE subject SET count = count + 1 WHERE word = %s AND next = %s''', (first, second))
 
 
 def scrape_thread(thread_id):
@@ -62,7 +70,7 @@ def scrape_thread(thread_id):
         for paragraph in paragraphs:
             total_paragraph_count += 1
             process_paragraph(paragraph)
-    conn.execute('INSERT INTO processed_threads VALUES (?)', (thread_id,))
+    cursor.execute('INSERT INTO processed_threads VALUES (%s)', (thread_id,))
     conn.commit()
     print 'commited {} paragraphs'.format(total_paragraph_count)
 
@@ -71,12 +79,17 @@ def process_paragraph(paragraph):
     parts = [part.lower() for part in paragraph.split()]
     if len(parts) < 3:
         return
-    conn.execute('''INSERT OR IGNORE INTO first_paragraph_word VALUES (?, ?)''', (parts[0], parts[1]))
+    cursor.execute('SELECT COUNT(*) FROM first_paragraph_word WHERE word_1 = %s AND word_2 = %s', (parts[0], parts[1]))
+    if cursor.fetchone()[0] == 0:
+        cursor.execute('''INSERT INTO first_paragraph_word VALUES (%s, %s)''', (parts[0], parts[1]))
     for i in xrange(len(parts) - 1):
         key = (parts[i], parts[i + 1])
         next_word = parts[i + 2] if i < (len(parts) - 2) else None
-        conn.execute('''INSERT OR IGNORE INTO paragraph VALUES (?, ?, ?, 0)''', (key[0], key[1], next_word))
-        conn.execute('''UPDATE paragraph SET count = count + 1 WHERE word_1 = ? AND word_2 = ? AND next = ?''',
+        cursor.execute('SELECT COUNT(*) FROM paragraph WHERE word_1 = %s AND word_2 = %s AND next = %s', (key[0], key[1], next_word))
+        if cursor.fetchone()[0] == 0:
+            cursor.execute('''INSERT INTO paragraph VALUES (%s, %s, %s, 1)''', (key[0], key[1], next_word))
+        else:
+            cursor.execute('''UPDATE paragraph SET count = count + 1 WHERE word_1 = %s AND word_2 = %s AND next = %s''',
                      (key[0], key[1], next_word))
 
 if __name__ == '__main__':

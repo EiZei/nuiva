@@ -16,7 +16,8 @@
     "q": "~1.4.1",
     "lodash": "~3.10.1",
     "sqlite3": "~3.0.10",
-    "js-lru-cache": "~0.1.8"
+    "js-lru-cache": "~0.1.8",
+    "pg": "~4.4.1"
   },
   "devDependencies": {
     "jasmine": "~2.3.2",
