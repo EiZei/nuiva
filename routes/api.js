@@ -3,22 +3,17 @@
 var express = require('express');
 var router = express.Router();
 var textGeneration = require('../components/text-generation');
-var errorHandler = require('../components/error-handler');
 
-router.get('/subject/', function (req, res) {
-    textGeneration.subject().then(function (subject) {
+router.get('/subject/', function (req, res, next) {
+    textGeneration.subject().done(function (subject) {
         res.json({result: subject});
-    }, function (err) {
-        errorHandler(err, res);
-    });
+    }, next);
 });
 
-router.get('/paragraph/', function (req, res) {
-    textGeneration.paragraph().then(function (paragraph) {
+router.get('/paragraph/', function (req, res, next) {
+    textGeneration.paragraph().done(function (paragraph) {
         res.json({result: paragraph});
-    }, function (err) {
-        errorHandler(err, res);
-    });
+    }, next);
 });
 
 module.exports = router;

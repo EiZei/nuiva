@@ -36,8 +36,6 @@ app.use(function(req, res, next) {
     next(err);
 });
 
-// production error handler
-// no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     errorHandler(err, res);
 });
