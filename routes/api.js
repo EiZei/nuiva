@@ -2,7 +2,8 @@
 
 var express = require('express');
 var router = express.Router();
-var textGeneration = require('../components/text-generation');
+var TextGeneration = require('../components/text-generation');
+var textGeneration = new TextGeneration();
 
 router.get('/subject/', function (req, res, next) {
     textGeneration.subject().done(function (subject) {
